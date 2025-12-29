@@ -24,7 +24,22 @@ pip install fastapi uvicorn
 # pip install langchain-mcp-adapters langgraph
 ```
 
-### 2. Configure MCP Servers
+### 2. Set Up Configuration
+
+Copy the example configuration file and add your API keys:
+
+```bash
+cp src/configuration/config.toml.example src/configuration/config.toml
+```
+
+Then edit `src/configuration/config.toml` with your actual API keys:
+- OpenAI API key
+- LangSmith API key (optional, for tracing)
+- Binance API credentials (if using Binance MCP server)
+
+**Important**: Never commit `config.toml` to git - it's already in `.gitignore`.
+
+### 3. Configure MCP Servers
 
 The repo ships with sample Binance and Playwright servers **disabled** so the backend can start without those binaries. To enable a server, set `"enabled": true` and ensure the referenced command plus credentials exist on your machine. Edit `src/client/mcp-servers.json`:
 
