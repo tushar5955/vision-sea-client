@@ -1,0 +1,147 @@
+.interface-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Changed from auto to hidden */
+  padding: 0; /* Remove vertical padding */
+  box-sizing: border-box;
+  
+  /* Improved scrollbar styling for dark backgrounds */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 207, 255, 0.4) rgba(19, 26, 44, 0.2);
+}
+
+/* Interface Header for Toggle Buttons */
+.interface-header {
+  width: 100%;
+  background: rgba(19, 26, 44, 0.9);
+  border-bottom: 2px solid rgba(29, 233, 182, 0.3);
+  /* Use a fixed, shared height and horizontal padding only */
+  height: var(--interface-header-height, 56px);
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1px solid rgba(29, 233, 182, 0.2);
+}
+
+.toggle-btn {
+  padding: 12px 24px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.toggle-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(29, 233, 182, 0.1);
+}
+
+.toggle-btn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #59afc9, #4f9db5);
+  box-shadow: 0 4px 15px rgba(29, 233, 182, 0.3);
+  transform: translateY(-1px);
+}
+
+.toggle-btn.active:hover {
+  background: linear-gradient(135deg, #62c2df, #59b1cc);
+  box-shadow: 0 6px 20px rgba(29, 233, 182, 0.4);
+}
+
+/* Webkit scrollbar styling */
+.interface-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.interface-content::-webkit-scrollbar-track {
+  background: rgba(19, 26, 44, 0.2);
+  border-radius: 10px;
+}
+
+.interface-content::-webkit-scrollbar-thumb {
+  background: rgba(90, 127, 207, 0.4);
+  border-radius: 10px;
+  border: 2px solid rgba(19, 26, 44, 0.2);
+}
+
+.interface-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(127, 207, 255, 0.6);
+}
+
+/* Add a container for scrollable content */
+.interface-scrollable-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%; /* Changed from auto to 100% to fill the container */
+  max-height: 100%; /* Ensure it doesn't exceed container height */
+  justify-content: flex-start; /* Align content to the top */
+  align-items: flex-start; /* Align to top instead of center */
+  padding: 20px; /* Add padding for content spacing */
+  box-sizing: border-box;
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 233, 182, 0.5) rgba(0, 0, 0, 0.1);
+  position: relative; /* Add this for proper positioning */
+}
+
+/* Webkit scrollbar styling for scrollable content */
+.interface-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.interface-scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.interface-scrollable-content::-webkit-scrollbar-thumb {
+  background-color: rgba(29, 233, 182, 0.5);
+  border-radius: 4px;
+}
+
+/* Make sure the content expands properly inside the scrollable area */
+.interface-scrollable-content > * {
+  max-width: 100%;
+  width: 100%;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* Prevent charts from shrinking */
+}
+
+/* Improve the agent image display case to ensure proper positioning */
+.interface-content-with-agent {
+  display: flex;
+  align-items: flex-end; /* Keep aligned to bottom */
+  justify-content: center;
+  padding-bottom: 0; /* Remove padding to allow agent to touch bottom */
+  overflow-y: hidden; /* Prevent scrolling when only showing the agent image */
+  position: relative; /* Make position relative for absolute positioning of agent */
+  height: 100%; /* Ensure full height */
+}

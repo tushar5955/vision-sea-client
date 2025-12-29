@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "binance": {
+      "command": "C:\\Users\\tusha\\Desktop\\Lab\\.venv\\Scripts\\binance-mcp-server.exe",
+      "transport": "stdio",
+      "args": [
+        "--api-key", "${BINANCE_API_KEY}",
+        "--api-secret", "${BINANCE_API_SECRET}",
+        "--binance-testnet"
+      ],
+      "filter_non_json_stdout": true,
+      "description": "Binance trading tools",
+      "enabled": false
+    },
+    "playwright": {
+      "command": "npx",
+      "transport": "stdio",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "description": "Playwright browser automation",
+      "enabled": true
+    }
+  }
+}

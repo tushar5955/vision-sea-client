@@ -1,0 +1,421 @@
+---
+openapi: 3.1.0
+info:
+  title: VisionSea MCP Backend
+  version: 1.0.0
+paths:
+  "/api/assistant/message":
+    post:
+      tags:
+      - assistant
+      summary: Create Assistant Message
+      operationId: create_assistant_message_api_assistant_message_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ChatRequest"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ChatResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/chat/conversations":
+    get:
+      tags:
+      - chat
+      summary: List Conversations
+      operationId: list_conversations_api_chat_conversations_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ChatConversationListResponse"
+  "/api/chat/{conversation_id}":
+    get:
+      tags:
+      - chat
+      summary: Get Conversation
+      operationId: get_conversation_api_chat__conversation_id__get
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conversation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ChatResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+      - chat
+      summary: Delete Conversation
+      operationId: delete_conversation_api_chat__conversation_id__delete
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conversation Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/api/mcp/servers":
+    get:
+      tags:
+      - mcp
+      summary: List Servers
+      operationId: list_servers_api_mcp_servers_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/MCPServersResponse"
+  "/api/mcp/status":
+    get:
+      tags:
+      - mcp
+      summary: Get Status
+      operationId: get_status_api_mcp_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/MCPStatusResponse"
+  "/api/mcp/reload":
+    post:
+      tags:
+      - mcp
+      summary: Reload Servers
+      operationId: reload_servers_api_mcp_reload_post
+      responses:
+        '204':
+          description: Successful Response
+  "/api/mcp/tools":
+    get:
+      tags:
+      - mcp
+      summary: List Tools
+      operationId: list_tools_api_mcp_tools_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/MCPToolsResponse"
+  "/api/mcp/tools/invoke":
+    post:
+      tags:
+      - mcp
+      summary: Invoke Tool
+      operationId: invoke_tool_api_mcp_tools_invoke_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ToolInvokeRequest"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ToolInvokeResponse"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HTTPValidationError"
+  "/":
+    get:
+      tags:
+      - meta
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Root  Get
+  "/health":
+    get:
+      tags:
+      - meta
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                type: object
+                title: Response Health Health Get
+components:
+  schemas:
+    ChatConversationListResponse:
+      properties:
+        conversations:
+          items:
+            type: string
+          type: array
+          title: Conversations
+      type: object
+      required:
+      - conversations
+      title: ChatConversationListResponse
+    ChatMessagePayload:
+      properties:
+        role:
+          type: string
+          title: Role
+        content:
+          type: string
+          title: Content
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+      type: object
+      required:
+      - role
+      - content
+      title: ChatMessagePayload
+    ChatMessageResponse:
+      properties:
+        role:
+          type: string
+          title: Role
+        content:
+          type: string
+          title: Content
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+      type: object
+      required:
+      - role
+      - content
+      title: ChatMessageResponse
+    ChatRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        conversation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conversation Id
+        history:
+          items:
+            "$ref": "#/components/schemas/ChatMessagePayload"
+          type: array
+          title: History
+      type: object
+      required:
+      - message
+      title: ChatRequest
+    ChatResponse:
+      properties:
+        conversation_id:
+          type: string
+          title: Conversation Id
+        message:
+          "$ref": "#/components/schemas/ChatMessageResponse"
+        history:
+          items:
+            "$ref": "#/components/schemas/ChatMessageResponse"
+          type: array
+          title: History
+      type: object
+      required:
+      - conversation_id
+      - message
+      - history
+      title: ChatResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            "$ref": "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MCPServerInfo:
+      properties:
+        name:
+          type: string
+          title: Name
+        transport:
+          type: string
+          title: Transport
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        enabled:
+          type: boolean
+          title: Enabled
+        has_command:
+          type: boolean
+          title: Has Command
+        has_url:
+          type: boolean
+          title: Has Url
+      type: object
+      required:
+      - name
+      - transport
+      - enabled
+      - has_command
+      - has_url
+      title: MCPServerInfo
+    MCPServersResponse:
+      properties:
+        servers:
+          items:
+            "$ref": "#/components/schemas/MCPServerInfo"
+          type: array
+          title: Servers
+      type: object
+      required:
+      - servers
+      title: MCPServersResponse
+    MCPStatusResponse:
+      properties:
+        loaded_servers:
+          type: integer
+          title: Loaded Servers
+        available_tools:
+          type: integer
+          title: Available Tools
+      type: object
+      required:
+      - loaded_servers
+      - available_tools
+      title: MCPStatusResponse
+    MCPToolInfo:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - name
+      title: MCPToolInfo
+    MCPToolsResponse:
+      properties:
+        tools:
+          items:
+            "$ref": "#/components/schemas/MCPToolInfo"
+          type: array
+          title: Tools
+      type: object
+      required:
+      - tools
+      title: MCPToolsResponse
+    ToolInvokeRequest:
+      properties:
+        tool_name:
+          type: string
+          title: Tool Name
+        arguments:
+          additionalProperties: true
+          type: object
+          title: Arguments
+      type: object
+      required:
+      - tool_name
+      title: ToolInvokeRequest
+    ToolInvokeResponse:
+      properties:
+        tool_name:
+          type: string
+          title: Tool Name
+        arguments:
+          additionalProperties: true
+          type: object
+          title: Arguments
+        output:
+          title: Output
+      type: object
+      required:
+      - tool_name
+      - arguments
+      - output
+      title: ToolInvokeResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

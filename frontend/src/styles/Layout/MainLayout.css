@@ -1,0 +1,46 @@
+.main-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  box-sizing: border-box;
+  border: 2px solid #333;
+  overflow: hidden; /* Prevent content from overflowing during resize */
+}
+
+.interface-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Contain overflow within this section */
+  position: relative; /* Establish positioning context */
+  transition: var(--theme-transition);
+  background-color: var(--background-color, #131416);
+}
+
+.chatbox-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--chat-background, #c2dafc);
+  position: relative;
+  overflow: hidden;
+  transition: var(--theme-transition);
+  min-width: 300px; /* Ensure chat doesn't get too small */
+  max-width: 60%; /* Prevent chat from becoming too large */
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
+
+/* Turtle theme specific chatbox styling */
+.turtle-theme .chatbox-section {
+  background: linear-gradient(135deg, var(--chat-gradient-light) 0%, var(--chat-gradient-dark) 100%);
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Add highlighting for active dragging across the entire interface */
+.main-layout.resizing {
+  cursor: col-resize !important;
+}
+
+.main-layout.resizing * {
+  user-select: none !important;
+}

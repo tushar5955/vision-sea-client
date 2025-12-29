@@ -1,0 +1,13 @@
+[openai]
+api_key = "your-openai-api-key-here"
+model_name = "gpt-4o-mini-2024-07-18"
+
+[langsmith]
+tracing = "true"
+endpoint = "https://api.smith.langchain.com"
+api_key = "your-langsmith-api-key-here"
+project = "VisionSea-dev"
+
+[binance]
+api_key = "your-binance-api-key-here"
+api_secret = "your-binance-api-secret-here"

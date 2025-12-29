@@ -1,0 +1,8 @@
+{
+  "output": {
+    "assistant": "<div class=\"response-container\">Backtest is starting now...</div>",
+    "action": "run_backtest",
+    "interface": "backtest_interface",
+    "refresh_interface": true
+  }
+}

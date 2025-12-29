@@ -1,0 +1,363 @@
+/* Chat container wrapper */
+.chat-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Configuration toolbar - now positioned at bottom */
+.config-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(22, 29, 42, 0.35);
+  border-top: 1px solid rgba(90, 127, 207, 0.25);
+  transition: var(--theme-transition);
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 48px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 -2px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 16px 16px;
+}
+
+.turtle-theme .config-toolbar {
+  background: rgba(2, 24, 20, 0.35);
+  border-top: 1px solid rgba(38, 166, 154, 0.25);
+  box-shadow: 
+    inset 0 1px 0 rgba(29, 233, 182, 0.08),
+    0 -2px 12px rgba(0, 77, 64, 0.2);
+}
+
+.config-button {
+  background: rgba(90, 127, 207, 0.08);
+  border: 1px solid rgba(90, 127, 207, 0.2);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.config-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(132, 208, 255, 0.15), transparent);
+  transition: left 0.5s;
+}
+
+.config-button:hover::before {
+  left: 100%;
+}
+
+.config-button:hover {
+  background: rgba(90, 127, 207, 0.15);
+  border-color: rgba(132, 208, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(90, 127, 207, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.config-button:active {
+  transform: translateY(0);
+}
+
+/* Turtle theme sophisticated styling */
+.turtle-theme .config-button {
+  background: rgba(38, 166, 154, 0.08);
+  border-color: rgba(38, 166, 154, 0.2);
+  color: #e0f2f1;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(29, 233, 182, 0.1);
+}
+
+.turtle-theme .config-button::before {
+  background: linear-gradient(90deg, transparent, rgba(29, 233, 182, 0.15), transparent);
+}
+
+.turtle-theme .config-button:hover {
+  background: rgba(38, 166, 154, 0.15);
+  border-color: rgba(29, 233, 182, 0.4);
+  box-shadow: 
+    0 4px 16px rgba(0, 77, 64, 0.3), 
+    0 0 8px rgba(29, 233, 182, 0.2),
+    inset 0 1px 0 rgba(29, 233, 182, 0.15);
+}
+
+/* Add status indicators */
+.config-button.active {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #c8e6c9;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 8px rgba(76, 175, 80, 0.3),
+    inset 0 1px 0 rgba(129, 199, 132, 0.2);
+}
+
+.turtle-theme .config-button.active {
+  background: rgba(29, 233, 182, 0.15);
+  border-color: rgba(29, 233, 182, 0.5);
+  color: #b2dfdb;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(29, 233, 182, 0.3),
+    inset 0 1px 0 rgba(29, 233, 182, 0.2);
+}
+
+.config-button.disabled {
+  background: rgba(90, 127, 207, 0.03);
+  border-color: rgba(90, 127, 207, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.turtle-theme .config-button.disabled {
+  background: rgba(38, 166, 154, 0.03);
+  border-color: rgba(38, 166, 154, 0.08);
+  color: rgba(224, 242, 241, 0.4);
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(29, 233, 182, 0.03);
+}
+
+/* Icon and label styling within buttons */
+.config-icon {
+  font-size: 14px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.config-label {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.config-button:hover .config-label {
+  opacity: 1;
+}
+
+/* Add connection status indicators */
+.config-button::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(244, 67, 54, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.config-button.active::after {
+  background: rgba(76, 175, 80, 0.9);
+  opacity: 1;
+}
+
+.turtle-theme .config-button.active::after {
+  background: rgba(29, 233, 182, 0.9);
+  box-shadow: 0 0 4px rgba(29, 233, 182, 0.5);
+}
+
+.message-holder-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  background: 
+  linear-gradient(to bottom, rgba(41,80,138,0.15) 0%, transparent 40%),
+  #131416;;
+  overflow-y: auto;
+  height: 0;
+  min-height: 0;
+  max-height: 100%;
+  padding: 0;
+  padding-bottom: 48px;
+  transition: var(--theme-transition);
+}
+
+/* Turtle theme specific styling for message holder */
+.turtle-theme .message-holder-section {
+  background: 
+    linear-gradient(to bottom, rgba(30, 61, 55, 0.5) 0%, rgb(17, 41, 31) 60%),
+    var(--background-color, #030806);
+  scrollbar-color: var(--secondary-color) rgba(0, 20, 16, 0.5);
+}
+
+.chat-input-section {
+  display: flex;
+  flex-direction: column;
+  background: rgba(18, 25, 38, 0.4);
+  padding: 0;
+  margin: 0;
+  position: relative;
+  transition: var(--theme-transition);
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 
+    0 -4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Turtle theme specific styling for input section */
+.turtle-theme .chat-input-section {
+  background: rgba(0, 20, 16, 0.4);
+  border-top: 1px solid rgba(38, 166, 154, 0.3);
+  box-shadow: 
+    0 -4px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(29, 233, 182, 0.05);
+}
+
+/* Add a collapsed state class for mobile views */
+.chatbox-collapsed {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-color, #5a7fcf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  margin: 16px;
+  cursor: pointer;
+}
+
+/* Animation for expanding and collapsing */
+.chatbox-expanding {
+  animation: expandChat 0.3s forwards;
+}
+
+.chatbox-collapsing {
+  animation: collapseChat 0.3s forwards;
+}
+
+@keyframes expandChat {
+  from {
+    flex: 0.1;
+    opacity: 0.7;
+  }
+  to {
+    flex: 0.33;
+    opacity: 1;
+  }
+}
+
+@keyframes collapseChat {
+  from {
+    flex: 0.33;
+    opacity: 1;
+  }
+  to {
+    flex: 0.1;
+    opacity: 0.7;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chatbox-section {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 50%;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+  }
+  
+  .resize-handle {
+    display: none;
+  }
+
+  .config-toolbar {
+    gap: 4px;
+    padding: 6px 8px;
+    flex-wrap: wrap;
+  }
+
+  .config-button {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .config-label {
+    display: none;
+  }
+
+  .config-icon {
+    font-size: 16px;
+  }
+}
+
+/* Back to hub button styling */
+.back-to-hub-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 12px;
+  background: var(--primary-color, #5a7fcf);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: 'Roboto Mono', monospace;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.7;
+  transition: var(--theme-transition);
+}
+
+.back-to-hub-button:hover {
+  opacity: 1;
+  background: var(--secondary-color, #7fcfff);
+  box-shadow: var(--glow-effect, 0 0 8px rgba(127, 207, 255, 0.4));
+}
+
+/* Turtle theme styling for back-to-hub button */
+.turtle-theme .back-to-hub-button {
+  background: var(--primary-color, #00796b);
+}
+
+.turtle-theme .back-to-hub-button:hover {
+  background: var(--highlight-color, #1de9b6);
+  color: var(--dark-text, #00352c);
+}

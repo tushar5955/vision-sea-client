@@ -1,0 +1,51 @@
+# Core FastAPI and web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.9
+
+# Redis for caching and sessions
+redis==5.0.1
+hiredis==2.2.3
+
+# Authentication and security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# HTTP client for external API calls
+httpx==0.25.2
+aiofiles==23.2.1
+
+# CORS middleware
+python-cors==1.7.0
+
+# Environment management
+python-dotenv==1.0.0
+
+# Logging and monitoring
+structlog==23.2.0
+
+# MCP (Model Context Protocol) dependencies
+# Add specific MCP libraries here when available
+websockets==12.0
+langchain-core==0.2.0
+langchain-openai==0.1.7
+langchain-mcp-adapters==0.0.7
+langgraph==0.1.10
+mcp==0.1.0
+
+# Validation and utilities
+email-validator==2.1.0
+validators==0.22.0
+
+# Background tasks
+celery==5.3.4
+
+# Testing (for production, minimal test deps)
+pytest==7.4.3

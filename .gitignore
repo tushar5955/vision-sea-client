@@ -1,0 +1,58 @@
+# VisionSea MCP Host
+# See individual service .gitignore files for service-specific ignores
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build artifacts
+build/
+dist/
+
+# Docker volumes
+docker/volumes/
+
+# Backups
+*.bak
+*.backup
+
+# Coverage reports
+coverage/
+htmlcov/
+
+# Node modules (in case someone runs npm install in root)
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Documentation build
+docs/_build/
+site/

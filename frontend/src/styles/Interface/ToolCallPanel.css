@@ -1,0 +1,237 @@
+.tool-call-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #e0f4ff;
+}
+
+.tool-call-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, rgba(86, 165, 255, 0.25), rgba(7, 15, 37, 0.85));
+  border: 1px solid rgba(86, 165, 255, 0.2);
+}
+
+.tool-call-header .eyebrow {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+  opacity: 0.7;
+  margin: 0 0 6px;
+}
+
+.tool-call-header h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #7de1ff;
+}
+
+.live-indicator .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7de1ff;
+  box-shadow: 0 0 12px rgba(125, 225, 255, 0.9);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.tool-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tool-empty {
+  padding: 24px;
+  border: 1px dashed rgba(125, 225, 255, 0.3);
+  border-radius: 16px;
+  background: rgba(7, 15, 37, 0.6);
+  color: #94b9d6;
+  font-style: italic;
+}
+
+.tool-card {
+  border-radius: 18px;
+  padding: 18px 20px;
+  background: linear-gradient(145deg, rgba(4, 13, 34, 0.9), rgba(10, 22, 43, 0.85));
+  border: 1px solid rgba(86, 165, 255, 0.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+}
+
+.tool-card.pulse {
+  animation: highlight 2s ease-out;
+  border-color: rgba(125, 225, 255, 0.6);
+}
+
+@keyframes highlight {
+  0% { box-shadow: 0 0 0 rgba(125, 225, 255, 0.6); }
+  50% { box-shadow: 0 0 25px rgba(125, 225, 255, 0.45); }
+  100% { box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35); }
+}
+
+.tool-card.hitl {
+  border-color: rgba(255, 190, 92, 0.4);
+  background: linear-gradient(135deg, rgba(35, 21, 4, 0.9), rgba(15, 9, 3, 0.85));
+}
+
+.tool-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.tool-card-header h4 {
+  margin: 6px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.tool-card-header time {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.badge-success { background: rgba(99, 214, 143, 0.2); color: #73ffba; }
+.status-badge.badge-error { background: rgba(255, 116, 133, 0.18); color: #ff8ea0; }
+.status-badge.badge-running { background: rgba(125, 225, 255, 0.18); color: #8fe0ff; }
+.status-badge.badge-pending { background: rgba(255, 206, 120, 0.18); color: #ffdc9e; }
+
+.tool-body {
+  display: grid;
+  gap: 12px;
+}
+
+.tool-body .label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.tool-body pre {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(86, 165, 255, 0.08);
+  font-size: 12px;
+  color: #d5f1ff;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.hitl-panel {
+  border-radius: 18px;
+  padding: 20px;
+  background: linear-gradient(145deg, rgba(24, 15, 2, 0.95), rgba(55, 16, 3, 0.9));
+  border: 1px solid rgba(255, 196, 120, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+}
+
+.hitl-panel-header h4 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.hitl-panel-header p {
+  margin: 4px 0 16px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hitl-fields {
+  display: grid;
+  gap: 16px;
+}
+
+.hitl-fields textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 196, 120, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffe6c4;
+  padding: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.hitl-error {
+  color: #ff9fa8;
+  margin: 0;
+}
+
+.hitl-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.hitl-actions button {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hitl-actions button.ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #d8e0ff;
+}
+
+.hitl-actions button.reject {
+  background: linear-gradient(135deg, #7a1021, #b52138);
+  color: #fff;
+}
+
+.hitl-actions button.edit {
+  background: linear-gradient(135deg, #19576a, #23809b);
+  color: #fff;
+}
+
+.hitl-actions button.approve {
+  background: linear-gradient(135deg, #1a7f42, #27b362);
+  color: #fff;
+}
+
+.hitl-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hitl-actions button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}

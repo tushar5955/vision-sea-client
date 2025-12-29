@@ -1,0 +1,38 @@
+/* Global app styles */
+:root {
+  --primary-color: #5a7fcf;
+  --secondary-color: #7fcfff;
+  --background-color: #131416;
+  --chat-background: #c2dafc;
+  --text-color: #e3f0ff;
+  --dark-text: #1a233a;
+  --accent-color: #84d0ff;
+  
+  /* Transitions for theme changes */
+  --theme-transition: all 0.3s ease;
+}
+
+/* Turtle theme variables */
+.turtle-theme {
+  --primary-color: #00796b;
+  --secondary-color: #26a69a;
+  --background-color: #004d40;
+  --chat-background: #b2dfdb;
+  --text-color: #e0f2f1;
+  --dark-text: #00352c;
+  --accent-color: #4db6ac;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #444;
+  letter-spacing: 1px;
+}
+
+/* Apply theme transitions to all elements */
+* {
+  transition: var(--theme-transition);
+}
+
+

@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "binance": {
+      "command": "C:\\Users\\tusha\\Desktop\\Lab\\.venv\\Scripts\\binance-mcp-server.exe",
+      "args": [
+        "--api-key", "cuOSx62NMt3mSSKUMu2kwu5prNvvP8cp6MQNrYPSLBWiHVsnyf7O3d1NBxEp9wj5Y",
+        "--api-secret", "P6qZnGIHra0xmOCOropo26kd17PCzARvL86Qrxk58srl09DZP7OvTYKGfFKqMGVG",
+        "--binance-testnet" 
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
