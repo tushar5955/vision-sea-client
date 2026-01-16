@@ -8,9 +8,9 @@
         "--api-secret", "${BINANCE_API_SECRET}",
         "--binance-testnet"
       ],
-      "filter_non_json_stdout": true,
+
       "description": "Binance trading tools",
-      "enabled": false
+      "enabled": true
     },
     "playwright": {
       "command": "npx",
