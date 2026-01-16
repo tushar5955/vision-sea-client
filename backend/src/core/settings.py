@@ -20,7 +20,7 @@ class AppSettings(BaseSettings):
     mcp_config_path: Path = Field(
         default_factory=lambda: Path(__file__).resolve().parent.parent / "client" / "mcp-servers.json"
     )
-    mcp_tool_timeout_seconds: Optional[float] = Field(default=360.0, ge=0.0)
+    mcp_tool_timeout_seconds: Optional[float] = Field(default=60.0, ge=0.0)
     allowed_cors_origins: List[str] = Field(
         default_factory=lambda: [
             "http://localhost:5173",

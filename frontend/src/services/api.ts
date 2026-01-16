@@ -257,6 +257,7 @@ export interface MCPServersResponse {
 export interface MCPStatusResponse {
   loaded_servers: number;
   available_tools: number;
+  failed_servers: string[];
 }
 
 export interface MCPToolInfo {

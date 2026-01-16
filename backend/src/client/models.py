@@ -89,6 +89,31 @@ class MCPServerRegistry(BaseModel):
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> "MCPServerRegistry":
+        """
+        Create an MCPServerRegistry instance from a mapping/dictionary.
+
+        This class method constructs an MCPServerRegistry by parsing a dictionary that contains
+        MCP server configurations. It handles two mapping formats:
+        1. A nested structure with an "mcpServers" key
+        2. A flat structure where the mapping itself contains server configurations
+
+        Args:
+            cls: The class itself (MCPServerRegistry). This is automatically passed when calling
+                 the class method and represents the class being instantiated.
+            mapping (Mapping[str, Any]): A dictionary-like object containing server configurations.
+                                          Can either have a top-level "mcpServers" key or be a flat
+                                          mapping of server names to their configurations.
+
+        Returns:
+            MCPServerRegistry: A new instance of MCPServerRegistry populated with the parsed
+                              server configurations.
+
+        Notes:
+            - If a server configuration is None/empty, it's converted to an empty dict
+            - The server name is automatically set from the key if not present in the payload
+            - If "transport" is missing but "url" exists, transport defaults to "streamable_http"
+            - Each server configuration is validated using MCPServerConfig.model_validate()
+        """
         raw_servers = mapping.get("mcpServers") or mapping
         configs: Dict[str, MCPServerConfig] = {}
         for name, payload in raw_servers.items():
@@ -111,6 +136,10 @@ class MCPServerRegistry(BaseModel):
     def enabled_servers(self) -> Iterable[MCPServerConfig]:
         return (config for config in self.servers.values() if config.enabled)
 
+    def disable_server(self, name: str) -> None:
+        if name in self.servers:
+            self.servers[name].enabled = False
+
     def to_multi_server_client_config(self) -> Dict[str, Dict[str, Any]]:
         return {
             name: config.to_client_dict()
@@ -130,3 +159,4 @@ class MCPServerRegistry(BaseModel):
             }
             for config in self.servers.values()
         ]
+ 

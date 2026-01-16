@@ -5,25 +5,29 @@ import ChatContainer from './components/Chatbot/ChatContainer';
 import InterfaceContainer from './components/Interface/InterfaceContainer';
 import { ChatProvider } from './context/ChatContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { MCPProvider } from './context/MCPContext';
+import { MCPProvider, useMCP } from './context/MCPContext';
 
 // Wrapper component to access theme
 const AppContent = () => {
   const { theme } = useTheme();
+  const { failedServers } = useMCP();
   
   // Apply appropriate theme class based on the theme mode
   const themeClass = theme.mode === 'turtle' ? 'turtle-theme' : '';
   
   return (
     <div className={themeClass}>
-      <MCPProvider>
-        <ChatProvider>
-          <MainLayout
-            leftSection={<InterfaceContainer />}
-            rightSection={<ChatContainer />}
-          />
-        </ChatProvider>
-      </MCPProvider>
+      {failedServers.length > 0 && (
+        <div style={{ position: 'fixed', top: 10, right: 10, background: 'red', color: 'white', padding: '10px', zIndex: 1000 }}>
+          Failed to load MCP servers: {failedServers.join(', ')}
+        </div>
+      )}
+      <ChatProvider>
+        <MainLayout
+          leftSection={<InterfaceContainer />}
+          rightSection={<ChatContainer />}
+        />
+      </ChatProvider>
     </div>
   );
 };
@@ -31,7 +35,9 @@ const AppContent = () => {
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <MCPProvider>
+        <AppContent />
+      </MCPProvider>
     </ThemeProvider>
   );
 }

@@ -15,6 +15,7 @@ interface MCPContextType {
   status: {
     loaded_servers: number;
     available_tools: number;
+    failed_servers: string[];
   } | null;
   callTool: (toolName: string, args: any) => Promise<{ success: boolean; result?: any; error?: string }>;
   reloadServers: () => Promise<void>;
@@ -23,6 +24,7 @@ interface MCPContextType {
   toolHitlStates: ToolHitlStatus[];
   toggleToolHitl: (toolName: string, requiresHuman: boolean) => Promise<void>;
   refreshToolHitl: () => Promise<void>;
+  failedServers: string[];
 }
 
 const MCPContext = createContext<MCPContextType | undefined>(undefined);
@@ -35,10 +37,11 @@ export const MCPProvider: React.FC<MCPProviderProps> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [servers, setServers] = useState<MCPServerInfo[]>([]);
   const [tools, setTools] = useState<MCPToolInfo[]>([]);
-  const [status, setStatus] = useState<{ loaded_servers: number; available_tools: number } | null>(null);
+  const [status, setStatus] = useState<{ loaded_servers: number; available_tools: number; failed_servers: string[] } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toolHitlStates, setToolHitlStates] = useState<ToolHitlStatus[]>([]);
+  const [failedServers, setFailedServers] = useState<string[]>([]);
 
   const loadMCPData = async () => {
     setIsLoading(true);
@@ -70,9 +73,11 @@ export const MCPProvider: React.FC<MCPProviderProps> = ({ children }) => {
 
       if (statusResult.status === 'fulfilled') {
         setStatus(statusResult.value);
+        setFailedServers(statusResult.value.failed_servers || []);
       } else {
         errors.push(`Status: ${handleAPIError(statusResult.reason).message}`);
         setStatus(null);
+        setFailedServers([]);
       }
 
       if (hitlResult.status === 'fulfilled') {
@@ -195,6 +200,7 @@ export const MCPProvider: React.FC<MCPProviderProps> = ({ children }) => {
     toolHitlStates,
     toggleToolHitl,
     refreshToolHitl,
+    failedServers,
   };
 
   return (

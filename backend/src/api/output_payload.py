@@ -48,6 +48,7 @@ class MCPServersResponse(BaseModel):
 class MCPStatusResponse(BaseModel):
     loaded_servers: int
     available_tools: int
+    failed_servers: List[str] = Field(default_factory=list)
 
 
 class MCPToolInfo(BaseModel):
