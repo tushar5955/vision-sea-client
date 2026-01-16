@@ -7,6 +7,7 @@ from core.settings import AppSettings, get_settings
 from client import MCPClientManager
 from services.assistant_service import AssistantService
 from services.chat_service import ChatService
+from services.artifact_service import ArtifactService
 
 _settings: AppSettings = get_settings()
 _mcp_manager = MCPClientManager(
@@ -14,6 +15,7 @@ _mcp_manager = MCPClientManager(
     tool_timeout=_settings.mcp_tool_timeout_seconds,
 )
 _chat_service = ChatService()
+_artifact_service = ArtifactService(_settings)
 _assistant_service: Optional[AssistantService] = None
 _assistant_lock = asyncio.Lock()
 
@@ -45,5 +47,10 @@ async def get_assistant_service() -> AssistantService:
 
     async with _assistant_lock:
         if _assistant_service is None:
-            _assistant_service = AssistantService(_settings, _mcp_manager, _chat_service)
+            _assistant_service = AssistantService(
+                _settings,
+                _mcp_manager,
+                _chat_service,
+                _artifact_service,
+            )
     return _assistant_service

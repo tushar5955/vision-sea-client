@@ -41,6 +41,18 @@ interface HitlDecisionInput {
   reason?: string;
 }
 
+type ArtifactStatus = 'idle' | 'generating' | 'ready' | 'error';
+
+export interface ArtifactRenderState {
+  id: string;
+  status: ArtifactStatus;
+  code: string;
+  chunks: string[];
+  metadata?: Record<string, any>;
+  updatedAt?: string;
+  error?: string | null;
+}
+
 interface ChatContextType {
   messages: Message[];
   isTyping: boolean;
@@ -57,6 +69,9 @@ interface ChatContextType {
   hitlRequest: HitlRequestState | null;
   submitHitlDecision: (input: HitlDecisionInput) => Promise<void>;
   isSubmittingHitl: boolean;
+  artifactMode: boolean;
+  artifactState: ArtifactRenderState | null;
+  toggleArtifactMode: () => void;
 }
 
 interface ChatProviderProps {
@@ -86,7 +101,27 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [toolPanelFocusKey, setToolPanelFocusKey] = useState<number>(0);
   const [hitlRequest, setHitlRequest] = useState<HitlRequestState | null>(null);
   const [isSubmittingHitl, setIsSubmittingHitl] = useState(false);
+  const [artifactMode, setArtifactMode] = useState(false);
+  const [artifactState, setArtifactState] = useState<ArtifactRenderState | null>(null);
   const streamAbortRef = useRef<AbortController | null>(null);
+
+  const makeArtifactId = useCallback(
+    () =>
+      (typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `artifact-${Date.now()}`),
+    [],
+  );
+
+  const toggleArtifactMode = useCallback(() => {
+    setArtifactMode(prev => {
+      const next = !prev;
+      if (!next) {
+        setArtifactState(null);
+      }
+      return next;
+    });
+  }, []);
 
   const updateLatestAssistantMessage = useCallback((updater: (prev: string) => string) => {
     setMessages(prev => {
@@ -160,6 +195,75 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
             setToolPanelFocusKey(Date.now());
           }
           break;
+        case 'artifact_started':
+          if (artifactMode) {
+            const artifactId = event.artifact_id || makeArtifactId();
+            setArtifactState({
+              id: artifactId,
+              status: 'generating',
+              code: '',
+              chunks: [],
+              metadata: event.metadata || {},
+              updatedAt: timestamp,
+              error: null,
+            });
+          }
+          break;
+        case 'artifact_delta':
+          if (artifactMode && event.chunk) {
+            const artifactId = event.artifact_id || makeArtifactId();
+            setArtifactState(prev => {
+              const base: ArtifactRenderState =
+                prev && prev.id === artifactId
+                  ? prev
+                  : {
+                      id: artifactId,
+                      status: 'generating',
+                      code: '',
+                      chunks: [],
+                      metadata: event.metadata || {},
+                    };
+              const nextChunks = [...base.chunks, event.chunk].slice(-120);
+              return {
+                ...base,
+                status: 'generating',
+                code: (base.code || '') + event.chunk,
+                chunks: nextChunks,
+                metadata: event.metadata || base.metadata,
+                updatedAt: timestamp,
+                error: null,
+              };
+            });
+          }
+          break;
+        case 'artifact_ready':
+          if (artifactMode) {
+            const artifactId = event.artifact_id || makeArtifactId();
+            setArtifactState(prev => ({
+              id: artifactId,
+              status: 'ready',
+              code: event.code || prev?.code || '',
+              chunks: prev?.chunks || [],
+              metadata: event.metadata || prev?.metadata,
+              updatedAt: timestamp,
+              error: null,
+            }));
+          }
+          break;
+        case 'artifact_error':
+          if (artifactMode) {
+            const artifactId = event.artifact_id || makeArtifactId();
+            setArtifactState(prev => ({
+              id: artifactId,
+              status: 'error',
+              code: prev?.code || '',
+              chunks: prev?.chunks || [],
+              metadata: prev?.metadata,
+              updatedAt: timestamp,
+              error: event.message || 'Artifact generation failed.',
+            }));
+          }
+          break;
         case 'hitl_request':
           if (event.interrupt_id) {
             const hitlState: HitlRequestState = {
@@ -214,7 +318,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
           break;
       }
     },
-    [conversationId, updateLatestAssistantMessage],
+    [conversationId, updateLatestAssistantMessage, artifactMode, makeArtifactId],
   );
 
   const handleToggleImage = () => {
@@ -244,6 +348,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setConversationId(null);
     setError(null);
     setIsTyping(false);
+    setArtifactState(null);
   };
 
   const handleSendMessage = async (userMsg: string) => {
@@ -254,6 +359,16 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       content: msg.message,
       metadata: msg.metadata || {},
     }));
+
+    const artifactRequest = artifactMode
+      ? {
+          enabled: true,
+          artifact_id: artifactState?.id ?? null,
+          component_name: artifactState?.metadata?.component_name ?? null,
+          current_code: artifactState?.code ?? null,
+          metadata: artifactState?.metadata ?? {},
+        }
+      : undefined;
 
     setMessages(prev => [
       ...prev,
@@ -274,6 +389,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
           message: userMsg,
           conversation_id: conversationId,
           history,
+          artifact_request: artifactRequest,
         },
         handleStreamEvent,
         { signal: controller.signal },
@@ -339,6 +455,9 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     hitlRequest,
     submitHitlDecision,
     isSubmittingHitl,
+    artifactMode,
+    artifactState,
+    toggleArtifactMode,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

@@ -18,7 +18,9 @@ const ChatContainer = () => {
     agentMode,
     resetToDefaultMode,
     conversationId,
-    clearConversation
+    clearConversation,
+    artifactMode,
+    toggleArtifactMode,
   } = useChatContext();
   const { callTool } = useMCP();
   const messageHolderRef = useRef<HTMLDivElement>(null);
@@ -96,6 +98,14 @@ const ChatContainer = () => {
         >
           <span className="config-icon">🤖</span>
           <span className="config-label">{currentModel.name}</span>
+        </button>
+        <button
+          className={`config-button ${artifactMode ? 'active' : ''}`}
+          onClick={toggleArtifactMode}
+          title="Toggle Artifact Forge"
+        >
+          <span className="config-icon">🛠️</span>
+          <span className="config-label">Artifacts</span>
         </button>
         <button
           className={`config-button ${mcpPanelExpanded ? 'active' : ''}`}

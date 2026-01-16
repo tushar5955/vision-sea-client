@@ -81,6 +81,15 @@ export interface ChatRequest {
   message: string;
   conversation_id?: string | null;
   history?: ChatMessagePayload[];
+  artifact_request?: ArtifactRequestPayload;
+}
+
+export interface ArtifactRequestPayload {
+  enabled: boolean;
+  artifact_id?: string | null;
+  component_name?: string | null;
+  current_code?: string | null;
+  metadata?: Record<string, any>;
 }
 
 export interface ChatMessageResponse {
@@ -107,11 +116,15 @@ export interface AssistantStreamEvent {
   timestamp?: string;
   text?: string;
   content?: string;
+  chunk?: string;
   tool_name?: string;
   tool_call_id?: string;
   args?: Record<string, any>;
   output?: any;
   status?: string;
+  artifact_id?: string;
+  code?: string;
+  metadata?: Record<string, any>;
   interrupt_id?: string;
   action_requests?: HitlActionRequest[];
   decisions?: Array<{ tool_name: string; decision: string; reason?: string | null }>;

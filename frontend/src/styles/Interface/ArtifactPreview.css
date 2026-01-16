@@ -1,0 +1,303 @@
+.artifact-lab-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.artifact-unified-panel {
+  position: relative;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(8, 15, 35, 0.92), rgba(12, 38, 56, 0.8));
+  border: 1px solid rgba(99, 179, 237, 0.3);
+  box-shadow: 0 25px 70px rgba(7, 9, 18, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.artifact-unified-panel:hover {
+  border-color: rgba(99, 179, 237, 0.6);
+  box-shadow: 0 25px 70px rgba(7, 9, 18, 0.65), 
+              0 0 40px rgba(99, 179, 237, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.artifact-unified-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(41, 169, 255, 0.08);
+  pointer-events: none;
+}
+
+.artifact-console-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.artifact-console-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  color: rgba(148, 197, 255, 0.6);
+  margin: 0 0 6px;
+}
+
+.artifact-console-header h4 {
+  margin: 0;
+  color: #e6f7ff;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+}
+
+.artifact-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  color: #69f7d5;
+}
+
+.artifact-status-pill .pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: artifact-pulse 1.4s infinite ease-in-out;
+}
+
+.artifact-status-pill.error {
+  background: rgba(255, 86, 96, 0.12);
+  border-color: rgba(255, 86, 96, 0.5);
+  color: #ff8690;
+}
+
+.artifact-stream-shell {
+  border-radius: 16px;
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  padding: 16px;
+  flex: 1;
+  width: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(18, 194, 233, 0.18), transparent 60%),
+    radial-gradient(circle at 90% 0%, rgba(0, 173, 181, 0.18), transparent 50%),
+    rgba(4, 17, 40, 0.8);
+  overflow: hidden;
+  transition: opacity 0.5s ease-out;
+}
+
+.artifact-stream-shell.fade-out {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.artifact-component-display {
+  flex: 1;
+  width: 100%;
+  border-radius: 16px;
+  opacity: 0;
+  animation: fade-in 0.6s ease-in forwards;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.artifact-component-display.fade-in {
+  opacity: 1;
+}
+
+.artifact-stream-matrix {
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #82ff66;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+  position: relative;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.artifact-stream-matrix::-webkit-scrollbar {
+  width: 6px;
+}
+
+.artifact-stream-matrix::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.artifact-stream-matrix::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 65, 0.3);
+  border-radius: 3px;
+}
+
+.artifact-code-chunk {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  font-size: 0.75rem;
+}
+
+.artifact-code-chunk.matrix-flow {
+  animation: matrix-stream 0.6s ease-in;
+  color: #00ff41;
+}
+
+@keyframes matrix-stream {
+  0% {
+    opacity: 0;
+    transform: translateX(-5px) scale(0.95);
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  }
+  20% {
+    opacity: 0.6;
+    color: #88ff88;
+    text-shadow: 0 0 15px rgba(136, 255, 136, 0.7);
+  }
+  50% {
+    opacity: 0.9;
+    color: #44ff44;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    color: #00ff41;
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+  }
+}
+
+.artifact-console-error {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: #ffb4c1;
+  background: rgba(255, 68, 107, 0.08);
+  border: 1px solid rgba(255, 68, 107, 0.3);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.artifact-preview-stage {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(77, 208, 225, 0.25), transparent 55%),
+    rgba(4, 10, 25, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(148, 197, 255, 0.2);
+  padding: 20px;
+  box-shadow: inset 0 0 35px rgba(7, 17, 45, 0.9);
+  overflow: auto;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.artifact-preview-stage:hover {
+  border-color: rgba(148, 197, 255, 0.4);
+  box-shadow: inset 0 0 45px rgba(7, 17, 45, 0.95),
+              0 0 20px rgba(77, 208, 225, 0.15);
+}
+
+.artifact-preview-stage > * {
+  width: 100%;
+  flex: 1;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.artifact-live-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.85rem;
+  color: #ff9aa2;
+  background: rgba(255, 71, 133, 0.12);
+  border: 1px solid rgba(255, 71, 133, 0.35);
+}
+
+/* Ensure LiveProvider and LivePreview fill container */
+.artifact-component-display .react-live {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.artifact-component-display .react-live > div {
+  width: 100%;
+  flex: 1;
+}
+
+/* Ensure LivePreview content fills width */
+.artifact-preview-stage .react-live-preview {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Override centered/max-width styles from generated artifacts */
+.artifact-preview-stage .react-live-preview > div,
+.artifact-preview-stage .react-live-preview > div > div {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@keyframes artifact-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}

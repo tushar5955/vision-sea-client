@@ -4,6 +4,7 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Dict, List, Optional, Sequence, Tuple
+from uuid import uuid4
 
 from fastapi.encoders import jsonable_encoder
 from langchain.agents import create_agent
@@ -14,8 +15,10 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
 
 from core.settings import AppSettings
+from api.input_payload import ArtifactRequestPayload
 from client import MCPClientManager
 from services.chat_service import ChatService
+from services.artifact_service import ArtifactJobSpec, ArtifactService
 
 log = logging.getLogger(__name__)
 
@@ -30,10 +33,12 @@ class AssistantService:
         settings: AppSettings,
         mcp_manager: MCPClientManager,
         chat_service: ChatService,
+        artifact_service: ArtifactService,
     ) -> None:
         self._settings = settings
         self._mcp_manager = mcp_manager
         self._chat_service = chat_service
+        self._artifact_service = artifact_service
         self._agent = None
         self._agent_lock = asyncio.Lock()
         self._checkpointer = InMemorySaver()
@@ -41,7 +46,12 @@ class AssistantService:
         self._pending_interrupts: Dict[str, asyncio.Future[Dict[str, Any]]] = {}
         self._pending_interrupt_actions: Dict[str, List[Dict[str, Any]]] = {}
 
-    async def get_response(self, conversation_id: str, message: str) -> str:
+    async def get_response(
+        self,
+        conversation_id: str,
+        message: str,
+        artifact_request: Optional[ArtifactRequestPayload] = None,
+    ) -> str:
         messages = await self._prepare_messages(conversation_id, message)
 
         agent = await self._ensure_agent()
@@ -60,9 +70,14 @@ class AssistantService:
         return reply
 
     async def stream_response(
-        self, conversation_id: str, message: str
+        self,
+        conversation_id: str,
+        message: str,
+        artifact_request: Optional[ArtifactRequestPayload] = None,
     ) -> AsyncIterator[StreamEvent]:
         messages = await self._prepare_messages(conversation_id, message)
+        history_snapshot: List[Dict[str, Any]] = []
+        tool_history: List[StreamEvent] = []
 
         agent = await self._ensure_agent()
         if agent is None:
@@ -96,6 +111,8 @@ class AssistantService:
                     final_text = event.get("content") or final_text
                 elif event["type"] == "token":
                     tokens.append(event.get("text", ""))
+                if event["type"] in {"tool_call_start", "tool_call_end"}:
+                    tool_history.append(event)
                 yield event
         except Exception as exc:  # pragma: no cover - defensive logging
             log.exception("Streaming run failed", exc_info=exc)
@@ -107,9 +124,18 @@ class AssistantService:
             await self._chat_service.append(
                 conversation_id, {"role": "assistant", "content": final_text}
             )
+            history_snapshot = await self._chat_service.get_history(conversation_id)
             yield self._event(
                 "final_message", conversation_id, {"content": final_text}
             )
+            if artifact_request and artifact_request.enabled:
+                async for artifact_event in self._stream_artifact(
+                    conversation_id,
+                    artifact_request,
+                    history_snapshot,
+                    tool_history,
+                ):
+                    yield artifact_event
             yield self._event("done", conversation_id)
 
     async def submit_hitl_decision(
@@ -225,6 +251,44 @@ class AssistantService:
                     break
             else:
                 next_payload = None
+
+    async def _stream_artifact(
+        self,
+        conversation_id: str,
+        artifact_request: ArtifactRequestPayload,
+        history: List[Dict[str, Any]],
+        tool_history: List[StreamEvent],
+    ) -> AsyncIterator[StreamEvent]:
+        if not artifact_request.enabled:
+            return
+        if self._artifact_service is None:
+            yield self._event(
+                "artifact_error",
+                conversation_id,
+                {"message": "Artifact service unavailable."},
+            )
+            return
+
+        last_user_message = self._extract_last_user(history)
+        if not last_user_message:
+            return
+
+        metadata = artifact_request.metadata or {}
+        spec = ArtifactJobSpec(
+            artifact_id=artifact_request.artifact_id or uuid4().hex,
+            conversation_id=conversation_id,
+            history=history,
+            tool_events=tool_history,
+            last_user_message=last_user_message,
+            current_code=artifact_request.current_code,
+            component_name=artifact_request.component_name,
+            metadata=metadata,
+        )
+
+        async for artifact_event in self._artifact_service.stream_artifact(spec):
+            event_type = artifact_event.get("type", "artifact_message")
+            extras = {k: v for k, v in artifact_event.items() if k != "type"}
+            yield self._event(event_type, conversation_id, extras)
 
     async def _ensure_agent(self):  # pragma: no cover - integration path
         if not self._settings.has_openai_credentials():
@@ -561,6 +625,13 @@ class AssistantService:
             elif role == "user":
                 converted.append(HumanMessage(content=content))
         return converted
+
+    @staticmethod
+    def _extract_last_user(history: List[Dict[str, Any]]) -> str:
+        for item in reversed(history):
+            if item.get("role") == "user":
+                return str(item.get("content", "")).strip()
+        return ""
 
     @staticmethod
     def _build_fallback_reply(message: str, tools: List[str]) -> str:

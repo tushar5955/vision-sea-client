@@ -11,10 +11,19 @@ class ChatMessagePayload(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
+class ArtifactRequestPayload(BaseModel):
+    enabled: bool = False
+    artifact_id: Optional[str] = None
+    component_name: Optional[str] = None
+    current_code: Optional[str] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
 class ChatRequest(BaseModel):
     message: str
     conversation_id: Optional[str] = None
     history: List[ChatMessagePayload] = Field(default_factory=list)
+    artifact_request: Optional[ArtifactRequestPayload] = None
 
 
 class ToolInvokeRequest(BaseModel):

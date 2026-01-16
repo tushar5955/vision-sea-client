@@ -30,7 +30,9 @@ async def create_assistant_message(
         ]
         await chat_service.replace_history(conversation_id, history_dicts)
 
-    reply = await assistant_service.get_response(conversation_id, payload.message)
+    reply = await assistant_service.get_response(
+        conversation_id, payload.message, payload.artifact_request
+    )
     history = await chat_service.get_history(conversation_id)
 
     response_history: List[ChatMessageResponse] = [
@@ -62,7 +64,7 @@ async def stream_assistant_message(
 
     async def event_generator() -> AsyncIterator[str]:
         async for event in assistant_service.stream_response(
-            conversation_id, payload.message
+            conversation_id, payload.message, payload.artifact_request
         ):
             data = json.dumps(event, ensure_ascii=False, default=str)
             yield f"data: {data}\n\n"

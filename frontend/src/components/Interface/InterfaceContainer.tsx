@@ -4,6 +4,7 @@ import CodeEditor from './CodeEditor';
 import CyberAvatar from './Avatar/CyberAvatar';
 import AvatarCanvas from './Avatar/AvatarCanvas';
 import ToolCallPanel from './ToolCallPanel';
+import ArtifactPreview from './ArtifactPreview';
 import '../../styles/Interface/InterfaceContainer.css';
 import { useChatContext } from '../../context/ChatContext';
 // Raw source imports for code view in OFF mode
@@ -43,7 +44,7 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = (props) => {
   // ON = interactive wrapper, OFF = raw component render
   // Default to ON when the app starts
   const [isOn, setIsOn] = useState(true);
-  const { toolPanelFocusKey } = useChatContext();
+  const { toolPanelFocusKey, artifactState } = useChatContext();
 
   // Build a registry: use provided components or sensible defaults
   const registry = useMemo<PluggableItem[]>(() => {
@@ -83,15 +84,28 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = (props) => {
       });
     }
 
+    const artifactEntry = artifactState
+      ? {
+          key: 'artifact-lab',
+          label: artifactState.metadata?.component_name || 'Artifact Lab',
+          component: ArtifactPreview,
+          props: { artifact: artifactState },
+        }
+      : null;
+
     if (components && components.length) {
-      return components;
+      return artifactEntry ? [artifactEntry, ...components] : components;
+    }
+
+    if (artifactEntry) {
+      base.unshift(artifactEntry);
     }
     return base;
-  }, [components, dynamicComponent, componentProps]);
+  }, [components, dynamicComponent, componentProps, artifactState]);
 
   // Selected key for switching between components
   const [selectedKey, setSelectedKey] = useState<string>(
-    defaultKey || 'cyber-avatar-canvas'
+    defaultKey || (artifactState ? 'artifact-lab' : 'cyber-avatar-canvas')
   );
 
   // Find the selected item each render
@@ -103,17 +117,19 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = (props) => {
   const selectedProps = selected?.props ?? {};
 
   // Map selected key to raw source for the code editor when OFF
-  const codeByKey: Record<string, string> = useMemo(
-    () => ({
+  const codeByKey: Record<string, string> = useMemo(() => {
+    const mapping: Record<string, string> = {
       'cyber-avatar-canvas': AvatarCanvasSource,
       'cyber-avatar': CyberAvatarSource,
       'tool-calls': '// Tool call dashboard does not expose source code.',
-      // Provide a helpful fallback for custom/unknown items
       custom:
         `// No source mapped for this view.\n// To wire it up, add a '?raw' import in InterfaceContainer.tsx\n// and map its key in codeByKey.`,
-    }),
-    []
-  );
+    };
+    if (artifactState?.code) {
+      mapping['artifact-lab'] = artifactState.code;
+    }
+    return mapping;
+  }, [artifactState]);
   const currentCode = codeByKey[selected?.key ?? ''] ?? codeByKey.custom;
 
   useEffect(() => {
@@ -123,6 +139,13 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = (props) => {
     setSelectedKey('tool-calls');
     setIsOn(true);
   }, [toolPanelFocusKey]);
+
+  useEffect(() => {
+    if (artifactState) {
+      setSelectedKey('artifact-lab');
+      setIsOn(true);
+    }
+  }, [artifactState]);
 
   return (
     <div className="interface-content">
