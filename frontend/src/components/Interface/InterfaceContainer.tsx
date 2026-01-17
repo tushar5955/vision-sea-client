@@ -136,9 +136,12 @@ const InterfaceContainer: React.FC<InterfaceContainerProps> = (props) => {
     if (!toolPanelFocusKey) {
       return;
     }
-    setSelectedKey('tool-calls');
-    setIsOn(true);
-  }, [toolPanelFocusKey]);
+    // Only switch to tool calls if not currently viewing an artifact
+    if (selectedKey !== 'artifact-lab') {
+      setSelectedKey('tool-calls');
+      setIsOn(true);
+    }
+  }, [toolPanelFocusKey, selectedKey]);
 
   useEffect(() => {
     if (artifactState) {

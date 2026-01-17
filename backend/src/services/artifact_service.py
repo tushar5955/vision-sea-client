@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, AsyncIterator, Dict, List, Optional, TypedDict
 
 from langchain_core.messages import AIMessage
@@ -91,9 +92,10 @@ class ArtifactService:
                     "Mission dossier:\n{artifact_brief}\n\n"
                     "Existing component (if provided) should be improved, not discarded:\n"
                     "{existing_code}\n\n"
-                    "Produce a single const component definition (NO exports/imports).\n"
+                    "Produce a creative, visually engaging const component definition (NO exports/imports).\n"
+                    "If tool data contains numbers, arrays, or structured data, visualize it with charts/graphs.\n"
                     "Component will be rendered in a sandboxed environment.\n"
-                    "Include any helper functions within the same code block.",
+                    "Include any helper functions (chart rendering, data processing) within the same code block.",
                 ),
             ]
         )
@@ -129,7 +131,9 @@ class ArtifactService:
 
         code_stream: List[str] = []
         final_message: Optional[str] = None
-        config = {"configurable": {"thread_id": f"artifact-{spec.artifact_id}"}}
+        # Use timestamp for unique thread ID to avoid rate limit issues with long contexts
+        thread_id = f"artifact-{spec.artifact_id}-{datetime.now().timestamp()}"
+        config = {"configurable": {"thread_id": thread_id}}
 
         try:
             async for raw_event in graph.astream_events(
@@ -213,43 +217,59 @@ class ArtifactService:
         metadata_blob: str,
     ) -> str:
         sections = [
-            "Conversation excerpt:\n" + history_snippet.strip(),
-            "Latest user request:\n" + user_request.strip(),
+            "User request:\n" + user_request.strip(),
         ]
+        # Prioritize tool data as it's often the most relevant for visualization
         if tool_digest:
-            sections.append("Recent MCP tool data:\n" + tool_digest.strip())
+            sections.insert(0, "Tool outputs (use this data for charts/visualizations):\n" + tool_digest.strip())
+        if history_snippet:
+            sections.append("Context:\n" + history_snippet.strip())
         if metadata_blob:
-            sections.append("Additional context:\n" + metadata_blob.strip())
+            sections.append("Additional info:\n" + metadata_blob.strip())
         sections.append(
             "Design directives:\n"
-            "- Futuristic glassmorphism aesthetic\n"
-            "- Self-contained styles using inline objects or CSS modules\n"
-            "- Ensure component works inside react-live without external assets\n"
-            "- Include graceful fallback content when data is missing\n"
-            "- Root container MUST fill parent: width: '100%', height: '100%'\n"
-            "- Use flex layout for responsive, container-fitting design\n"
-            "- Avoid max-width, fixed heights, or centered containers that don't fill space"
+            "- Create visually stunning, futuristic components with glassmorphism\n"
+            "- Transform data into charts/graphs using SVG (no external libs)\n"
+            "- Self-contained inline styles only\n"
+            "- Works in react-live sandbox (no imports/exports)\n"
+            "- Root container fills parent: width: '100%', height: '100%'\n"
+            "- Responsive flex layouts, avoid fixed dimensions\n"
+            "- Add interactivity where appropriate (hover, animations)"
         )
         return "\n\n".join(section for section in sections if section.strip())
 
-    def _summarize_history(self, history: List[Dict[str, Any]], limit: int = 8) -> str:
-        window = history[-limit:]
-        lines = [
-            f"{item.get('role', 'assistant').upper()}: {item.get('content', '').strip()}"
-            for item in window
-        ]
+    def _summarize_history(self, history: List[Dict[str, Any]], limit: int = 2) -> str:
+        """Get last user message and assistant response for focused context."""
+        window = history[-limit:] if history else []
+        lines = []
+        for item in window:
+            role = item.get('role', 'assistant').upper()
+            content = item.get('content', '').strip()
+            # Truncate long messages to avoid bloat
+            if len(content) > 500:
+                content = content[:500] + "..."
+            lines.append(f"{role}: {content}")
         return "\n".join(lines)
 
-    def _summarize_tools(self, events: List[Dict[str, Any]], limit: int = 8) -> str:
+    def _summarize_tools(self, events: List[Dict[str, Any]], limit: int = 3) -> str:
+        """Extract tool names and outputs for creative component generation."""
         collected: List[str] = []
         for event in events:
-            if event.get("type") == "tool_call_start":
-                args = json.dumps(event.get("args", {}), ensure_ascii=False)[:280]
-                collected.append(f"{event.get('tool_name', 'tool')} args: {args}")
-            elif event.get("type") == "tool_call_end":
-                output = json.dumps(event.get("output"), ensure_ascii=False)[:320]
-                collected.append(f"{event.get('tool_name', 'tool')} result: {output}")
-        return "\n".join(collected[-limit:])
+            # Focus on tool outputs (results) - these often contain data to visualize
+            if event.get("type") == "tool_call_end":
+                tool_name = event.get('tool_name', 'tool')
+                output = event.get("output")
+                try:
+                    # Try to keep structured data intact for better visualization
+                    output_str = json.dumps(output, ensure_ascii=False, indent=2)[:800]
+                except (TypeError, ValueError):
+                    output_str = str(output)[:800]
+                collected.append(f"Tool: {tool_name}\nOutput:\n{output_str}")
+            # Include tool names from start events for context
+            elif event.get("type") == "tool_call_start":
+                tool_name = event.get('tool_name', 'tool')
+                collected.append(f"Tool called: {tool_name}")
+        return "\n\n".join(collected[-limit:])
 
     def _summarize_metadata(self, metadata: Dict[str, Any]) -> str:
         if not metadata:
