@@ -1,11 +1,11 @@
 /* ...existing code... */
 .chat-input-container {
     width: 100%;
-    background: rgba(18, 25, 38, 0.45);
+    background: rgba(18, 25, 38, 0.65);
     border-radius: 16px 16px 0 0;
     box-shadow: 
-        0 2px 20px 0 rgba(0,0,0,0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        0 4px 24px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     padding: 0;
     border: 1px solid rgba(90, 127, 207, 0.2);
     border-bottom: none;
@@ -15,18 +15,18 @@
     position: relative;
     transition: var(--theme-transition);
     min-height: 56px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 /* Turtle theme specific container styling */
 .turtle-theme .chat-input-container {
-    background: rgba(0, 20, 16, 0.45);
+    background: rgba(0, 20, 16, 0.65);
     border: 1px solid rgba(38, 166, 154, 0.2);
     border-bottom: none;
     box-shadow: 
-        0 2px 20px 0 rgba(0,0,0,0.25),
-        inset 0 1px 0 rgba(29, 233, 182, 0.06);
+        0 4px 24px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(29, 233, 182, 0.08);
 }
 
 /* Add typing indicator styles */

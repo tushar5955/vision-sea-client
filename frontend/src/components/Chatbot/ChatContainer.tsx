@@ -78,7 +78,6 @@ const ChatContainer = () => {
         <button
           className={`config-button ${showConversationManager ? 'active' : ''}`}
           onClick={() => setShowConversationManager(true)}
-          title="View Conversation History"
         >
           <span className="config-icon">💬</span>
           <span className="config-label">History</span>
@@ -86,7 +85,6 @@ const ChatContainer = () => {
         <button
           className="config-button"
           onClick={clearConversation}
-          title="Start New Conversation"
         >
           <span className="config-icon">➕</span>
           <span className="config-label">New</span>
@@ -94,7 +92,6 @@ const ChatContainer = () => {
         <button
           className={`config-button ${showLLMConfig ? 'active' : ''}`}
           onClick={() => setShowLLMConfig(true)}
-          title="Configure LLM Model"
         >
           <span className="config-icon">🤖</span>
           <span className="config-label">{currentModel.name}</span>
@@ -102,7 +99,6 @@ const ChatContainer = () => {
         <button
           className={`config-button ${artifactMode ? 'active' : ''}`}
           onClick={toggleArtifactMode}
-          title="Toggle Artifact Forge"
         >
           <span className="config-icon">🛠️</span>
           <span className="config-label">Artifacts</span>
@@ -110,7 +106,6 @@ const ChatContainer = () => {
         <button
           className={`config-button ${mcpPanelExpanded ? 'active' : ''}`}
           onClick={() => setMcpPanelExpanded(!mcpPanelExpanded)}
-          title="Toggle MCP Agents & Tools"
         >
           <span className="config-icon">⚡</span>
           <span className="config-label">Tools</span>
